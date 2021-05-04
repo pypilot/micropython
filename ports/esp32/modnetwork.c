@@ -724,6 +724,19 @@ unknown:
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(esp_config_obj, 1, esp_config);
 
+STATIC mp_obj_t esp_wifi_ps(size_t n_args, const mp_obj_t *args) {
+    wifi_ps_type_t ps_type_old, ps_type_new;
+    // wlan_if_obj_t *self = MP_OBJ_TO_PTR(args[0]);
+
+    ESP_EXCEPTIONS(esp_wifi_get_ps(&ps_type_old));
+    if (n_args == 2) {
+        ps_type_new = (wifi_ps_type_t)mp_obj_get_int(args[1]);
+        ESP_EXCEPTIONS(esp_wifi_set_ps(ps_type_new));
+    }
+    return MP_OBJ_NEW_SMALL_INT(ps_type_old);
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(esp_wifi_ps_obj, 1, 2, esp_wifi_ps);
+
 STATIC const mp_rom_map_elem_t wlan_if_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_active), MP_ROM_PTR(&esp_active_obj) },
     { MP_ROM_QSTR(MP_QSTR_connect), MP_ROM_PTR(&esp_connect_obj) },
@@ -733,6 +746,8 @@ STATIC const mp_rom_map_elem_t wlan_if_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_isconnected), MP_ROM_PTR(&esp_isconnected_obj) },
     { MP_ROM_QSTR(MP_QSTR_config), MP_ROM_PTR(&esp_config_obj) },
     { MP_ROM_QSTR(MP_QSTR_ifconfig), MP_ROM_PTR(&esp_ifconfig_obj) },
+    // wifi power save functions
+    { MP_ROM_QSTR(MP_QSTR_wifi_ps), MP_ROM_PTR(&esp_wifi_ps_obj) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(wlan_if_locals_dict, wlan_if_locals_dict_table);
@@ -802,6 +817,10 @@ STATIC const mp_rom_map_elem_t mp_module_network_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_STAT_BEACON_TIMEOUT), MP_ROM_INT(WIFI_REASON_BEACON_TIMEOUT)},
     { MP_ROM_QSTR(MP_QSTR_STAT_ASSOC_FAIL), MP_ROM_INT(WIFI_REASON_ASSOC_FAIL)},
     { MP_ROM_QSTR(MP_QSTR_STAT_HANDSHAKE_TIMEOUT), MP_ROM_INT(WIFI_REASON_HANDSHAKE_TIMEOUT)},
+    // wifi power save constants
+    { MP_ROM_QSTR(MP_QSTR_WIFI_PS_NONE), MP_ROM_INT(WIFI_PS_NONE)},
+    { MP_ROM_QSTR(MP_QSTR_WIFI_PS_MIN_MODEM), MP_ROM_INT(WIFI_PS_MIN_MODEM)},
+    { MP_ROM_QSTR(MP_QSTR_WIFI_PS_MAX_MODEM), MP_ROM_INT(WIFI_PS_MAX_MODEM)},
     #endif
 };
 
