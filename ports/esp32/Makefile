@@ -31,7 +31,7 @@ QSTR_GLOBAL_REQUIREMENTS = $(SDKCONFIG_H)
 MICROPY_ROM_TEXT_COMPRESSION ?= 1
 MICROPY_PY_USSL = 0
 MICROPY_SSL_AXTLS = 0
-MICROPY_PY_BTREE = 1
+MICROPY_PY_BTREE = 0
 MICROPY_VFS_FAT = 1
 MICROPY_VFS_LFS2 = 1
 
@@ -117,14 +117,14 @@ endif
 
 # Support BLE by default.
 # Can be explicitly disabled on the command line or board config.
-MICROPY_PY_BLUETOOTH ?= 1
+MICROPY_PY_BLUETOOTH ?= 0
 ifeq ($(MICROPY_PY_BLUETOOTH),1)
 SDKCONFIG += boards/sdkconfig.ble
 
 # Use NimBLE on ESP32.
-MICROPY_BLUETOOTH_NIMBLE ?= 1
+MICROPY_BLUETOOTH_NIMBLE ?= 0
 # Use Nimble bindings, but ESP32 IDF provides the Nimble library.
-MICROPY_BLUETOOTH_NIMBLE_BINDINGS_ONLY = 1
+MICROPY_BLUETOOTH_NIMBLE_BINDINGS_ONLY = 0
 include $(TOP)/extmod/nimble/nimble.mk
 endif
 
@@ -290,9 +290,9 @@ ifeq ($(DEBUG), 1)
 CFLAGS += -g
 COPT = -O0
 else
-#CFLAGS += -fdata-sections -ffunction-sections
+CFLAGS += -fdata-sections -ffunction-sections
 COPT += -Os -DNDEBUG
-#LDFLAGS += --gc-sections
+LDFLAGS += --gc-sections
 endif
 
 # Options for mpy-cross
@@ -378,8 +378,13 @@ DRIVERS_SRC_C = $(addprefix drivers/,\
 
 OBJ_MP =
 OBJ_MP += $(PY_O)
-OBJ_MP += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
-OBJ_MP += $(addprefix $(BUILD)/, $(SRC_CXX:.cpp=.o))
+
+#OBJ_MP += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
+#OBJ_MP += $(addprefix $(BUILD)/, $(SRC_CXX:.cpp=.o))
+
+OBJ_SRC_C = $(SRC_C:.c=.o)
+OBJ_MP += $(addprefix $(BUILD)/, $(OBJ_SRC_C:.cpp=.o))
+
 OBJ_MP += $(addprefix $(BUILD)/, $(EXTMOD_SRC_C:.c=.o))
 OBJ_MP += $(addprefix $(BUILD)/, $(LIB_SRC_C:.c=.o))
 OBJ_MP += $(addprefix $(BUILD)/, $(DRIVERS_SRC_C:.c=.o))

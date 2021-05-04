@@ -47,7 +47,7 @@ TOUCH = touch
 PYTHON = python3
 
 AS = $(CROSS_COMPILE)as
-CC = $(CROSS_COMPILE)gcc
+CC = ccache $(CROSS_COMPILE)gcc
 CXX = $(CROSS_COMPILE)g++
 GDB = $(CROSS_COMPILE)gdb
 LD = $(CROSS_COMPILE)ld
